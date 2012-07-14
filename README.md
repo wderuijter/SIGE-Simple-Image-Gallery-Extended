@@ -1,4 +1,5 @@
 SIGE - Simple Image Gallery Extended
+=======
 Kubik-Rubik Joomla! Extensions
 =======
 
