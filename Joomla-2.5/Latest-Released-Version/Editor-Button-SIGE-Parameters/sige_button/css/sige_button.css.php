@@ -1,10 +1,9 @@
 <?php
 /**
  *  @Copyright
- *  @package    Editor Button - SIGE Parameter Button - Plugin for Joomla! 2.5
+ *  @package    Editor Button - SIGE Parameters Button - Plugin for Joomla! 2.5
  *  @author     Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version    2.5-1
- *  @date       Created on 14-Jul-2012
+ *  @version    2.5-2 - 2013-10-12
  *  @link       Project Site {@link http://joomla-extensions.kubik-rubik.de/sige-simple-image-gallery-extended}
  *
  *  @license GNU/GPL
@@ -34,5 +33,3 @@ $dir = dirname(__FILE__);
 $filename = $dir . DS . 'sige_button.css';
 
 include($filename);
-
-?>

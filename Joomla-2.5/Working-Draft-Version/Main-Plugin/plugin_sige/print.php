@@ -1,9 +1,9 @@
 <?php
 /**
  *  @Copyright
- *  @package     SIGE - Simple Image Gallery Extended - Plugin Joomla 2.5
+ *  @package     SIGE - Simple Image Gallery Extended
  *  @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version     2.5-3 - 04-Jun-2012
+ *  @version     2.5-6 - 2013-06-19
  *  @link        http://joomla-extensions.kubik-rubik.de/sige-simple-image-gallery-extended
  *
  *  @license GNU/GPL
@@ -21,9 +21,9 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-if($_GET['img'] == "")
+if($_GET['img'] == '')
 {
-    exit("No parameters!");
+    exit('No parameters!');
 }
 
 if($_GET['img'] != '')
@@ -40,7 +40,7 @@ if($_GET['img'] != '')
         $_caption_ = '';
     }
 
-    $date = date("d.m.Y - H:i", time());
+    $date = date('d.m.Y - H:i', time());
     ?>
     <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
     <html xmlns="http://www.w3.org/1999/xhtml">
@@ -48,7 +48,7 @@ if($_GET['img'] != '')
             <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
             <meta http-equiv="expires" content="0" />
             <meta http-equiv="cache-control" content="no-cache" />
-            <title><?php echo $_name_ ?> - Simple Image Gallery Extended by Kubik-Rubik.de</title>
+            <title><?php echo $_name_ ?> - Simple Image Gallery Extended - Kubik-Rubik Joomla! Extensions</title>
         </head>
         <body onload="window.print();">
             <div style="text-align:center">
@@ -62,7 +62,8 @@ if($_GET['img'] != '')
                     ?>
                 </p>
                 <p><img src="<?php echo $_image_ ?>" alt="<?php echo $_name_ ?>" title="<?php echo $_name_ ?>" /></p>
-                <p style="font-size: small"><?php echo $date ?><br />Powered by <a href="http://joomla-extensions.kubik-rubik.de/sige-simple-image-gallery-extended" title="Simple Image Gallery Extended">Simple Image Gallery Extended</a> - <a href="http://joomla-extensions.kubik-rubik.de" title="Joomla Extensions by Kubik-Rubik.de - Viktor Vogel">Kubik-Rubik.de</a></p>
+                <p><?php echo $date ?></p>
+                <p style="font-size: small">Simple Image Gallery Extended - Kubik-Rubik Joomla! Extensions</p>
             </div>
         </body>
     </html>

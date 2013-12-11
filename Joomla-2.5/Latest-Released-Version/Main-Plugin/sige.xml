@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension type="plugin" version="2.5" group="content" method="upgrade">
     <name>PLG_CONTENT_SIGE</name>
+    <version>2.5-6</version>
+    <creationDate>2013-06-19</creationDate>
+    <license>http://www.gnu.org/licenses/gpl-3.0</license>
+    <copyright>Copyright 2013 Viktor Vogel. All rights reserved.</copyright>
     <author>Viktor Vogel</author>
-    <creationDate>04-Jun-2012</creationDate>
-    <copyright>This extension in released under the GNU/GPL License - http://www.gnu.org/copyleft/gpl.html</copyright>
     <authorEmail>admin@kubik-rubik.de</authorEmail>
     <authorUrl>http://joomla-extensions.kubik-rubik.de/</authorUrl>
-    <version>2.5-3</version>
     <description>PLG_CONTENT_SIGE_XML_DESCRIPTION</description>
     <files>
         <filename plugin="sige">sige.php</filename>
@@ -19,17 +20,13 @@
         <language tag="en-GB">language/en-GB/en-GB.plg_content_sige.sys.ini</language>
         <language tag="de-DE">language/de-DE/de-DE.plg_content_sige.ini</language>
         <language tag="de-DE">language/de-DE/de-DE.plg_content_sige.sys.ini</language>
-        <language tag="it-IT">language/it-IT/it-IT.plg_content_sige.ini</language>
-        <language tag="it-IT">language/it-IT/it-IT.plg_content_sige.sys.ini</language>
-        <language tag="zh-TW">language/zh-TW/zh-TW.plg_content_sige.ini</language>
-        <language tag="zh-TW">language/zh-TW/zh-TW.plg_content_sige.sys.ini</language>
-        <language tag="fr-FR">language/fr-FR/fr-FR.plg_content_sige.ini</language>
-        <language tag="fr-FR">language/fr-FR/fr-FR.plg_content_sige.sys.ini</language>
     </languages>
     <config>
         <fields name="params" addfieldpath="/plugins/content/sige/fields">
             <fieldset name="SIGE_GALLERY">
-				<field type="krdonationcodecheck" />
+                <field type="krdonationcodecheck" />
+                <field type="krversioncheck" name="krversioncheck" default="sige|2.5-6" />
+                <field type="krtitle" name="spacer" label="" />
                 <field name="thumbs" type="list" default="0" label="PLG_CONTENT_SIGE_THUMBS" description="PLG_CONTENT_SIGE_THUMBSDESC">
                     <option value="1">JYES</option>
                     <option value="0">JNO</option>
@@ -44,12 +41,13 @@
                 </field>
                 <field name="gap_v" type="text" default="30" size="5" label="PLG_CONTENT_SIGE_GAPV" description="PLG_CONTENT_SIGE_GAPVDESC" />
                 <field name="gap_h" type="text" default="30" size="5" label="PLG_CONTENT_SIGE_GAPH" description="PLG_CONTENT_SIGE_GAPHDESC" />
-                <field name="random" type="list" default="2" label="PLG_CONTENT_SIGE_RANDOM" description="PLG_CONTENT_SIGE_RANDOMDESC">
-                    <option value="1">JYES</option>
+                <field name="sort" type="list" default="2" label="PLG_CONTENT_SIGE_SORT" description="PLG_CONTENT_SIGE_SORTDESC">
+                    <option value="1">PLG_CONTENT_SIGE_RANDOM</option>
                     <option value="2">PLG_CONTENT_SIGE_NOASC</option>
                     <option value="3">PLG_CONTENT_SIGE_NODESC</option>
                     <option value="4">PLG_CONTENT_SIGE_TIMEASC</option>
                     <option value="5">PLG_CONTENT_SIGE_TIMEDESC</option>
+                    <option value="6">PLG_CONTENT_SIGE_SORTFROMFILE</option>
                 </field>
                 <field name="view" type="list" default="0" label="PLG_CONTENT_SIGE_VIEW" description="PLG_CONTENT_SIGE_VIEWDESC">
                     <option value="0">Slimbox</option>
@@ -201,9 +199,16 @@
                     <option value="2">SHA1</option>
                 </field>
             </fieldset>
-			<fieldset name="donation">
-				<field name="donation_code" type="text" default="" size="40" label="KR_DONATION_CODE" description="KR_DONATION_CODEDESC" />
-			</fieldset>
+            <fieldset name="donation">
+                <field name="donation_code" type="text" default="" size="40" label="KR_DONATION_CODE" description="KR_DONATION_CODEDESC" />
+            </fieldset>
+            <fieldset name="versioncheck">
+                <field name="versioncheck_enable" type="list" default="1" label="KR_VERSION_CHECK" description="KR_VERSION_CHECKDESC">
+                    <option value="1">KR_VERSION_CHECK_ONCESESSION</option>
+                    <option value="2">KR_VERSION_CHECK_ONEVERYLOAD</option>
+                    <option value="0">JNO</option>
+                </field>
+            </fieldset>
         </fields>
     </config>
 </extension>

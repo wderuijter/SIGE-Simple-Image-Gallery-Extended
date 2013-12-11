@@ -1,10 +1,9 @@
 <?php
 /**
  *  @Copyright
- *  @package    Editor Button - SIGE Parameter Button - Plugin for Joomla! 2.5
+ *  @package    Editor Button - SIGE Parameters Button - Plugin for Joomla! 2.5
  *  @author     Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version    2.5-1
- *  @date       Created on 15-Jul-2012
+ *  @version    2.5-2 - 2013-10-12
  *  @link       Project Site {@link http://joomla-extensions.kubik-rubik.de/sige-simple-image-gallery-extended}
  *
  *  @license GNU/GPL
@@ -24,6 +23,9 @@
 define('_JEXEC', 1);
 define('JPATH_BASE', dirname(__FILE__).'/../../..');
 define('DS', DIRECTORY_SEPARATOR);
+
+// Deactivate error reporting to suppress session errror warnings
+ini_set('error_reporting', 0);
 
 require_once JPATH_BASE.DS.'includes'.DS.'defines.php';
 require_once JPATH_BASE.DS.'includes'.DS.'framework.php';
@@ -77,6 +79,7 @@ if($token == md5($pluginParams->get('token')))
         $nodesc = 'Nein, absteigend';
         $timeasc = 'Änderungsdatum aufsteigend';
         $timedesc = 'Änderungsdatum absteigend';
+        $sortfromfile = 'Sortierung aus der Informationsdatei';
         $insert = 'Einfügen';
         $size = 'Größe';
         $gallery = 'Galerie';
@@ -98,7 +101,7 @@ if($token == md5($pluginParams->get('token')))
         $limitdesc = 'Anzahl der angezeigten Bilder limitieren?';
         $limitquantitydesc = 'Anzahl der angezeigten Bilder. Leer lassen, wenn nicht benötigt!';
         $noslimdesc = 'Bilder ohne Slimbox-Effekt anzeigen? Mit dieser Option kann man Bilder ganz normal anzeigen lassen (ohne Verlinkung).';
-        $randomdesc = 'Bilder in zufälliger Reihenfolge anzeigen?';
+        $sortdesc = 'Sortierung der Bilder auswählen. Bei "Sortierung aus der Informationsdatei" wird die Reihenfolge aus der Informationsdatei (z.B.: captions.txt) ausgelesen, alle anderen Bilder, die nicht angegeben sind, werden in der Galerie nicht angezeigt. Um diese Option nutzen zu können, muss die Option "Informationen aus Textdatei (Info)" aktiviert und eine Informationsdatei im Bildordner zur Verfügung gestellt werden. Siehe Projektseite für mehr Informationen!';
         $rootdesc = 'Bildordner ausgehend vom Rootverzeichnis? Pfad zum Bildordner vom Rootverzeichnis, nicht images/stories';
         $ratiodesc = 'Sollen die Seitenverhältnisse beibehalten werden?';
         $captiondesc = 'Bildunterschrift anzeigen?';
@@ -154,6 +157,7 @@ if($token == md5($pluginParams->get('token')))
         $nodesc = 'No, descending';
         $timeasc = 'Modified Ascending';
         $timedesc = 'Modified descending';
+        $sortfromfile = 'Sorting from information file';
         $insert = 'Insert';
         $size = 'Size';
         $gallery = 'Gallery';
@@ -175,7 +179,7 @@ if($token == md5($pluginParams->get('token')))
         $limitdesc = 'Limit the number of shown images?';
         $limitquantitydesc = 'Number of shown images. Leave blank if not required!';
         $noslimdesc = 'Show images without slimbox-effect? With this option you can show images quite normally (without link - like a Web1.0 Gallery).';
-        $randomdesc = 'Show images in random order?';
+        $sortdesc = 'Select the sorting of the images. With "Sorting from information file" the sorting is determined through the information file (e.g. captions.txt), all other images which are not specified are excluded from the gallery. If you want to use this option, then you have to activate the option "Information from text file (Info)" and also provide the information file in the images folder. See project page for more information!';
         $rootdesc = 'Starting from the root directory? Path to image folder from root, not from images/stories.';
         $ratiodesc = 'Should the aspect ratios be maintained?';
         $captiondesc = 'Show caption?';
@@ -261,9 +265,9 @@ if($token == md5($pluginParams->get('token')))
             <script type="text/javascript" src="<?php echo htmlspecialchars(dirname($_SERVER['PHP_SELF'])); ?>/../../../media/system/js/mootools-more.js"></script>
             <link rel="stylesheet" type="text/css" media="screen" href="sige_button/css/sige_button.css" />
             <script type="text/javascript">
-                window.addEvent('domready', function(){
+                window.addEvent('domready', function() {
                     var mySlide = new Fx.Slide('size').hide();
-                    $('toggle_size').addEvent('click', function(event){
+                    $('toggle_size').addEvent('click', function(event) {
                         event.stop();
                         mySlide.toggle();
                         mySlide2.hide();
@@ -273,7 +277,7 @@ if($token == md5($pluginParams->get('token')))
                     });
 
                     var mySlide2 = new Fx.Slide('gallery').hide();
-                    $('toggle_gallery').addEvent('click', function(event){
+                    $('toggle_gallery').addEvent('click', function(event) {
                         event.stop();
                         mySlide2.toggle();
                         mySlide.hide();
@@ -283,7 +287,7 @@ if($token == md5($pluginParams->get('token')))
                     });
 
                     var mySlide3 = new Fx.Slide('thumbnail').hide();
-                    $('toggle_thumbnail').addEvent('click', function(event){
+                    $('toggle_thumbnail').addEvent('click', function(event) {
                         event.stop();
                         mySlide3.toggle();
                         mySlide.hide();
@@ -293,7 +297,7 @@ if($token == md5($pluginParams->get('token')))
                     });
 
                     var mySlide4 = new Fx.Slide('single').hide();
-                    $('toggle_single').addEvent('click', function(event){
+                    $('toggle_single').addEvent('click', function(event) {
                         event.stop();
                         mySlide4.toggle();
                         mySlide.hide();
@@ -303,7 +307,7 @@ if($token == md5($pluginParams->get('token')))
                     });
 
                     var mySlide5 = new Fx.Slide('jsview').hide();
-                    $('toggle_jsview').addEvent('click', function(event){
+                    $('toggle_jsview').addEvent('click', function(event) {
                         event.stop();
                         mySlide5.toggle();
                         mySlide.hide();
@@ -312,13 +316,13 @@ if($token == md5($pluginParams->get('token')))
                         mySlide4.hide();
                     });
 
-                    $$('.tooltip').each(function(element,index) {
+                    $$('.tooltip').each(function(element, index) {
                         var content = element.get('title').split('::');
                         element.store('tip:title', content[0]);
                         element.store('tip:text', content[1]);
                     });
 
-                    var tooltip = new Tips('.tooltip',{
+                    var tooltip = new Tips('.tooltip', {
                         className: 'tooltip',
                         fixed: true,
                         hideDelay: 80,
@@ -334,363 +338,365 @@ if($token == md5($pluginParams->get('token')))
                     var tag = "{gallery}";
                     var paramsfolder = document.getElementById("paramsfolder").value;
                     if (paramsfolder == '') {
-                        tag = tag+"<?php echo $folder; ?>";
+                        tag = tag + "<?php echo $folder; ?>";
                     }
                     else
                     {
-                        tag = tag+paramsfolder;
+                        tag = tag + paramsfolder;
                     }
                     var paramswidth = document.getElementById("paramswidth").value;
                     if (paramswidth != '') {
-                        tag = tag+",width="+paramswidth;
+                        tag = tag + ",width=" + paramswidth;
                     }
                     var paramsheight = document.getElementById("paramsheight").value;
                     if (paramsheight != '') {
-                        tag = tag+",height="+paramsheight;
+                        tag = tag + ",height=" + paramsheight;
                     }
                     var paramsgap_v = document.getElementById("paramsgap_v").value;
                     if (paramsgap_v != '') {
-                        tag = tag+",gap_v="+paramsgap_v;
+                        tag = tag + ",gap_v=" + paramsgap_v;
                     }
                     var paramsgap_h = document.getElementById("paramsgap_h").value;
                     if (paramsgap_h != '') {
-                        tag = tag+",gap_h="+paramsgap_h;
+                        tag = tag + ",gap_h=" + paramsgap_h;
                     }
 
                     var paramsquality = document.getElementById("paramsquality").value;
                     if (paramsquality != '') {
-                        tag = tag+",quality="+paramsquality;
+                        tag = tag + ",quality=" + paramsquality;
                     }
                     var paramsquality_png = document.getElementById("paramsquality_png").value;
                     if (paramsquality_png != '') {
-                        tag = tag+",quality_png="+paramsquality_png;
+                        tag = tag + ",quality_png=" + paramsquality_png;
                     }
                     if (document.sige_parameter.paramsdisplaynavtip[0].checked == true)
                     {
-                        tag = tag+",displaynavtip=1";
+                        tag = tag + ",displaynavtip=1";
                     } else if (document.sige_parameter.paramsdisplaynavtip[1].checked == true) {
-                        tag = tag+",displaynavtip=0";
+                        tag = tag + ",displaynavtip=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsdisplayarticle[0].checked == true)
                     {
-                        tag = tag+",displayarticle=1";
+                        tag = tag + ",displayarticle=1";
                     } else if (document.sige_parameter.paramsdisplayarticle[1].checked == true) {
-                        tag = tag+",displayarticle=0";
+                        tag = tag + ",displayarticle=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsthumbs[0].checked == true)
                     {
-                        tag = tag+",thumbs=1";
+                        tag = tag + ",thumbs=1";
                     } else if (document.sige_parameter.paramsthumbs[1].checked == true) {
-                        tag = tag+",thumbs=0";
+                        tag = tag + ",thumbs=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramslimit[0].checked == true)
                     {
-                        tag = tag+",limit=1";
+                        tag = tag + ",limit=1";
                     } else if (document.sige_parameter.paramslimit[1].checked == true) {
-                        tag = tag+",limit=0";
+                        tag = tag + ",limit=0";
                     } else {
                         tag = tag;
                     }
                     var paramslimit_quantity = document.getElementById("paramslimit_quantity").value;
                     if (paramslimit_quantity != '') {
-                        tag = tag+",limit_quantity="+paramslimit_quantity;
+                        tag = tag + ",limit_quantity=" + paramslimit_quantity;
                     }
                     if (document.sige_parameter.paramsnoslim[0].checked == true)
                     {
-                        tag = tag+",noslim=1";
+                        tag = tag + ",noslim=1";
                     } else if (document.sige_parameter.paramsnoslim[1].checked == true) {
-                        tag = tag+",noslim=0";
+                        tag = tag + ",noslim=0";
                     } else {
                         tag = tag;
                     }
-                    if (document.sige_parameter.paramsrandom[0].checked == true)
+                    if (document.sige_parameter.paramssort[0].checked == true)
                     {
-                        tag = tag+",random=1";
-                    } else if (document.sige_parameter.paramsrandom[1].checked == true) {
-                        tag = tag+",random=2";
-                    } else if (document.sige_parameter.paramsrandom[2].checked == true) {
-                        tag = tag+",random=3";
-                    } else if (document.sige_parameter.paramsrandom[3].checked == true) {
-                        tag = tag+",random=4";
-                    } else if (document.sige_parameter.paramsrandom[4].checked == true) {
-                        tag = tag+",random=5";
+                        tag = tag + ",sort=1";
+                    } else if (document.sige_parameter.paramssort[1].checked == true) {
+                        tag = tag + ",sort=2";
+                    } else if (document.sige_parameter.paramssort[2].checked == true) {
+                        tag = tag + ",sort=3";
+                    } else if (document.sige_parameter.paramssort[3].checked == true) {
+                        tag = tag + ",sort=4";
+                    } else if (document.sige_parameter.paramssort[4].checked == true) {
+                        tag = tag + ",sort=5";
+                    } else if (document.sige_parameter.paramssort[5].checked == true) {
+                        tag = tag + ",sort=6";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsroot[0].checked == true)
                     {
-                        tag = tag+",root=1";
+                        tag = tag + ",root=1";
                     } else if (document.sige_parameter.paramsroot[1].checked == true) {
-                        tag = tag+",root=0";
+                        tag = tag + ",root=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsratio[0].checked == true)
                     {
-                        tag = tag+",ratio=1";
+                        tag = tag + ",ratio=1";
                     } else if (document.sige_parameter.paramsratio[1].checked == true) {
-                        tag = tag+",ratio=0";
+                        tag = tag + ",ratio=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsfileinfo[0].checked == true)
                     {
-                        tag = tag+",fileinfo=1";
+                        tag = tag + ",fileinfo=1";
                     } else if (document.sige_parameter.paramsfileinfo[1].checked == true) {
-                        tag = tag+",fileinfo=0";
+                        tag = tag + ",fileinfo=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramscaption[0].checked == true)
                     {
-                        tag = tag+",caption=1";
+                        tag = tag + ",caption=1";
                     } else if (document.sige_parameter.paramscaption[1].checked == true) {
-                        tag = tag+",caption=0";
+                        tag = tag + ",caption=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsiptc[0].checked == true)
                     {
-                        tag = tag+",iptc=1";
+                        tag = tag + ",iptc=1";
                     } else if (document.sige_parameter.paramsiptc[1].checked == true) {
-                        tag = tag+",iptc=0";
+                        tag = tag + ",iptc=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsiptcutf8[0].checked == true)
                     {
-                        tag = tag+",iptcutf8=1";
+                        tag = tag + ",iptcutf8=1";
                     } else if (document.sige_parameter.paramsiptcutf8[1].checked == true) {
-                        tag = tag+",iptcutf8=0";
+                        tag = tag + ",iptcutf8=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsprint[0].checked == true)
                     {
-                        tag = tag+",print=1";
+                        tag = tag + ",print=1";
                     } else if (document.sige_parameter.paramsprint[1].checked == true) {
-                        tag = tag+",print=0";
+                        tag = tag + ",print=0";
                     } else {
                         tag = tag;
                     }
                     var paramssingle = document.getElementById("paramssingle").value;
                     if (paramssingle != '') {
-                        tag = tag+",single="+paramssingle;
+                        tag = tag + ",single=" + paramssingle;
                     }
                     var paramsscaption = document.getElementById("paramsscaption").value;
                     if (paramsscaption != '') {
-                        tag = tag+",scaption="+paramsscaption;
+                        tag = tag + ",scaption=" + paramsscaption;
                     }
                     if (document.sige_parameter.paramssingle_gallery[0].checked == true)
                     {
-                        tag = tag+",single_gallery=1";
+                        tag = tag + ",single_gallery=1";
                     } else if (document.sige_parameter.paramssingle_gallery[1].checked == true) {
-                        tag = tag+",single_gallery=0";
+                        tag = tag + ",single_gallery=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramssalign[0].checked == true)
                     {
-                        tag = tag+",salign=left";
+                        tag = tag + ",salign=left";
                     } else if (document.sige_parameter.paramssalign[1].checked == true) {
-                        tag = tag+",salign=right";
+                        tag = tag + ",salign=right";
                     } else if (document.sige_parameter.paramssalign[2].checked == true) {
-                        tag = tag+",salign=center";
+                        tag = tag + ",salign=center";
                     } else {
                         tag = tag;
                     }
                     var paramsconnect = document.getElementById("paramsconnect").value;
                     if (paramsconnect != '') {
-                        tag = tag+",connect="+paramsconnect;
+                        tag = tag + ",connect=" + paramsconnect;
                     }
                     if (document.sige_parameter.paramsdownload[0].checked == true)
                     {
-                        tag = tag+",download=1";
+                        tag = tag + ",download=1";
                     } else if (document.sige_parameter.paramsdownload[1].checked == true) {
-                        tag = tag+",download=0";
+                        tag = tag + ",download=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramslist[0].checked == true)
                     {
-                        tag = tag+",list=1";
+                        tag = tag + ",list=1";
                     } else if (document.sige_parameter.paramslist[1].checked == true) {
-                        tag = tag+",list=0";
+                        tag = tag + ",list=0";
                     } else {
                         tag = tag;
                     }
                     var paramsword = document.getElementById("paramsword").value;
                     if (paramsword != '') {
-                        tag = tag+",word="+paramsword;
+                        tag = tag + ",word=" + paramsword;
                     }
                     if (document.sige_parameter.paramscrop[0].checked == true)
                     {
-                        tag = tag+",crop=1";
+                        tag = tag + ",crop=1";
                     } else if (document.sige_parameter.paramscrop[1].checked == true) {
-                        tag = tag+",crop=0";
+                        tag = tag + ",crop=0";
                     } else {
                         tag = tag;
                     }
                     var paramscrop_factor = document.getElementById("paramscrop_factor").value;
                     if (paramscrop_factor != '') {
-                        tag = tag+",crop_factor="+paramscrop_factor;
+                        tag = tag + ",crop_factor=" + paramscrop_factor;
                     }
                     if (document.sige_parameter.paramsthumbdetail[0].checked == true)
                     {
-                        tag = tag+",thumbdetail=1";
+                        tag = tag + ",thumbdetail=1";
                     } else if (document.sige_parameter.paramsthumbdetail[1].checked == true) {
-                        tag = tag+",thumbdetail=2";
+                        tag = tag + ",thumbdetail=2";
                     } else if (document.sige_parameter.paramsthumbdetail[2].checked == true) {
-                        tag = tag+",thumbdetail=3";
+                        tag = tag + ",thumbdetail=3";
                     } else if (document.sige_parameter.paramsthumbdetail[3].checked == true) {
-                        tag = tag+",thumbdetail=4";
+                        tag = tag + ",thumbdetail=4";
                     } else if (document.sige_parameter.paramsthumbdetail[4].checked == true) {
-                        tag = tag+",thumbdetail=5";
+                        tag = tag + ",thumbdetail=5";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramscalcmaxthumbsize[0].checked == true)
                     {
-                        tag = tag+",calcmaxthumbsize=1";
+                        tag = tag + ",calcmaxthumbsize=1";
                     } else if (document.sige_parameter.paramscalcmaxthumbsize[1].checked == true) {
-                        tag = tag+",calcmaxthumbsize=0";
+                        tag = tag + ",calcmaxthumbsize=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramswatermark[0].checked == true)
                     {
-                        tag = tag+",watermark=1";
+                        tag = tag + ",watermark=1";
                     } else if (document.sige_parameter.paramswatermark[1].checked == true) {
-                        tag = tag+",watermark=0";
+                        tag = tag + ",watermark=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramswatermarkposition[0].checked == true)
                     {
-                        tag = tag+",watermarkposition=1";
+                        tag = tag + ",watermarkposition=1";
                     } else if (document.sige_parameter.paramswatermarkposition[1].checked == true) {
-                        tag = tag+",watermarkposition=2";
+                        tag = tag + ",watermarkposition=2";
                     } else if (document.sige_parameter.paramswatermarkposition[2].checked == true) {
-                        tag = tag+",watermarkposition=3";
+                        tag = tag + ",watermarkposition=3";
                     } else if (document.sige_parameter.paramswatermarkposition[3].checked == true) {
-                        tag = tag+",watermarkposition=4";
+                        tag = tag + ",watermarkposition=4";
                     } else if (document.sige_parameter.paramswatermarkposition[4].checked == true) {
-                        tag = tag+",watermarkposition=5";
+                        tag = tag + ",watermarkposition=5";
                     } else {
                         tag = tag;
                     }
                     var paramswatermarkimage = document.getElementById("paramswatermarkimage").value;
                     if (paramswatermarkimage != '') {
-                        tag = tag+",watermarkimage="+paramswatermarkimage;
+                        tag = tag + ",watermarkimage=" + paramswatermarkimage;
                     }
                     if (document.sige_parameter.paramsencrypt[0].checked == true)
                     {
-                        tag = tag+",encrypt=1";
+                        tag = tag + ",encrypt=1";
                     } else if (document.sige_parameter.paramsencrypt[1].checked == true) {
-                        tag = tag+",encrypt=2";
+                        tag = tag + ",encrypt=2";
                     } else if (document.sige_parameter.paramsencrypt[2].checked == true) {
-                        tag = tag+",encrypt=3";
+                        tag = tag + ",encrypt=3";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsimage_info[0].checked == true)
                     {
-                        tag = tag+",image_info=1";
+                        tag = tag + ",image_info=1";
                     } else if (document.sige_parameter.paramsimage_info[1].checked == true) {
-                        tag = tag+",image_info=0";
+                        tag = tag + ",image_info=0";
                     } else {
                         tag = tag;
                     }
                     var paramsimage_link = document.getElementById("paramsimage_link").value;
                     if (paramsimage_link != '') {
-                        tag = tag+",image_link="+paramsimage_link;
+                        tag = tag + ",image_link=" + paramsimage_link;
                     }
                     if (document.sige_parameter.paramsimage_link_new[0].checked == true)
                     {
-                        tag = tag+",image_link_new=1";
+                        tag = tag + ",image_link_new=1";
                     } else if (document.sige_parameter.paramsimage_link_new[1].checked == true) {
-                        tag = tag+",image_link_new=0";
+                        tag = tag + ",image_link_new=0";
                     } else {
                         tag = tag;
                     }
                     var paramscolumn_quantity = document.getElementById("paramscolumn_quantity").value;
                     if (paramscolumn_quantity != '') {
-                        tag = tag+",column_quantity="+paramscolumn_quantity;
+                        tag = tag + ",column_quantity=" + paramscolumn_quantity;
                     }
                     if (document.sige_parameter.paramscss_image[0].checked == true)
                     {
-                        tag = tag+",css_image=1";
+                        tag = tag + ",css_image=1";
                     } else if (document.sige_parameter.paramscss_image[1].checked == true) {
-                        tag = tag+",css_image=0";
+                        tag = tag + ",css_image=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramscss_image_half[0].checked == true)
                     {
-                        tag = tag+",css_image_half=1";
+                        tag = tag + ",css_image_half=1";
                     } else if (document.sige_parameter.paramscss_image_half[1].checked == true) {
-                        tag = tag+",css_image_half=0";
+                        tag = tag + ",css_image_half=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsturbo[0].checked == true)
                     {
-                        tag = tag+",turbo=1";
+                        tag = tag + ",turbo=1";
                     } else if (document.sige_parameter.paramsturbo[1].checked == true) {
-                        tag = tag+",turbo=new";
+                        tag = tag + ",turbo=new";
                     } else if (document.sige_parameter.paramsturbo[2].checked == true) {
-                        tag = tag+",turbo=0";
+                        tag = tag + ",turbo=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramscopyright[0].checked == true)
                     {
-                        tag = tag+",copyright=1";
+                        tag = tag + ",copyright=1";
                     } else if (document.sige_parameter.paramscopyright[1].checked == true) {
-                        tag = tag+",copyright=0";
+                        tag = tag + ",copyright=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsresize_images[0].checked == true)
                     {
-                        tag = tag+",resize_images=1";
+                        tag = tag + ",resize_images=1";
                     } else if (document.sige_parameter.paramsresize_images[1].checked == true) {
-                        tag = tag+",resize_images=0";
+                        tag = tag + ",resize_images=0";
                     } else {
                         tag = tag;
                     }
                     var paramswidth_image = document.getElementById("paramswidth_image").value;
                     if (paramswidth_image != '') {
-                        tag = tag+",width_image="+paramswidth_image;
+                        tag = tag + ",width_image=" + paramswidth_image;
                     }
                     var paramsheight_image = document.getElementById("paramsheight_image").value;
                     if (paramsheight_image != '') {
-                        tag = tag+",height_image="+paramsheight_image;
+                        tag = tag + ",height_image=" + paramsheight_image;
                     }
                     if (document.sige_parameter.paramsratio_image[0].checked == true)
                     {
-                        tag = tag+",ratio_image=1";
+                        tag = tag + ",ratio_image=1";
                     } else if (document.sige_parameter.paramsratio_image[1].checked == true) {
-                        tag = tag+",ratio_image=0";
+                        tag = tag + ",ratio_image=0";
                     } else {
                         tag = tag;
                     }
                     if (document.sige_parameter.paramsimages_new[0].checked == true)
                     {
-                        tag = tag+",images_new=1";
+                        tag = tag + ",images_new=1";
                     } else if (document.sige_parameter.paramsimages_new[1].checked == true) {
-                        tag = tag+",images_new=0";
+                        tag = tag + ",images_new=0";
                     } else {
                         tag = tag;
                     }
 
-                    tag = tag+"{/gallery}";
+                    tag = tag + "{/gallery}";
                     //alert("Variable"+tag+"!"); Testausgabe
                     window.parent.jInsertEditorText(tag, '<?php echo preg_replace('#[^A-Z0-9\-\_\[\]]#i', '', $e_name); ?>');
                     window.parent.SqueezeBox.close();
@@ -862,20 +868,22 @@ if($token == md5($pluginParams->get('token')))
                                 </td>
                             </tr>
                             <tr>
-                                <td width="20%"><label id="paramsrandom-lbl" for="paramsrandom" class="tooltip" title="random :: <?php echo $randomdesc; ?>">random</label></td>
+                                <td width="20%"><label id="paramssort-lbl" for="paramssort" class="tooltip" title="sort :: <?php echo $sortdesc; ?>">sort</label></td>
                                 <td>
-                                    <input name="paramsrandom" id="paramsrandom" value="1" type="radio" />
-                                    <label for="paramsrandom"><?php echo $yes; ?></label>
-                                    <input name="paramsrandom" id="paramsrandom2" value="2" type="radio" />
-                                    <label for="paramsrandom2"><?php echo $noasc; ?></label>
-                                    <input name="paramsrandom" id="paramsrandom3" value="3" type="radio" />
-                                    <label for="paramsrandom3"><?php echo $nodesc; ?></label>
-                                    <input name="paramsrandom" id="paramsrandom4" value="4" type="radio" />
-                                    <label for="paramsrandom4"><?php echo $timeasc; ?></label>
-                                    <input name="paramsrandom" id="paramsrandom5" value="5" type="radio" />
-                                    <label for="paramsrandom5"><?php echo $timedesc; ?></label>
-                                    <input name="paramsrandom" id="paramsrandom0" value="0" checked="checked" type="radio" />
-                                    <label for="paramsrandom0"><?php echo $notuse; ?></label>
+                                    <input name="paramssort" id="paramssort" value="1" type="radio" />
+                                    <label for="paramssort"><?php echo $yes; ?></label>
+                                    <input name="paramssort" id="paramssort2" value="2" type="radio" />
+                                    <label for="paramssort2"><?php echo $noasc; ?></label>
+                                    <input name="paramssort" id="paramssort3" value="3" type="radio" />
+                                    <label for="paramssort3"><?php echo $nodesc; ?></label>
+                                    <input name="paramssort" id="paramssort4" value="4" type="radio" />
+                                    <label for="paramssort4"><?php echo $timeasc; ?></label>
+                                    <input name="paramssort" id="paramssort5" value="5" type="radio" />
+                                    <label for="paramssort5"><?php echo $timedesc; ?></label>
+                                    <input name="paramssort" id="paramssort6" value="6" type="radio" />
+                                    <label for="paramssort6"><?php echo $sortfromfile; ?></label>
+                                    <input name="paramssort" id="paramssort0" value="0" checked="checked" type="radio" />
+                                    <label for="paramssort0"><?php echo $notuse; ?></label>
                                 </td>
                             </tr>
                             <tr>
@@ -1217,4 +1225,3 @@ else
         jexit();
     }
 }
-?>

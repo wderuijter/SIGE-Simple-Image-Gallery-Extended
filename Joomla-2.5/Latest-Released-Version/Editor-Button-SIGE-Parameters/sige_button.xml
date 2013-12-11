@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <extension version="2.5" type="plugin" group="editors-xtd" method="upgrade">
     <name>PLG_SIGE_BUTTON</name>
+    <version>2.5-2</version>
+    <creationDate>2013-10-12</creationDate>
+    <license>http://www.gnu.org/licenses/gpl-3.0</license>
+    <copyright>Copyright 2013 Viktor Vogel. All rights reserved.</copyright>
     <author>Viktor Vogel</author>
-    <creationDate>15-Jul-2012</creationDate>
-    <copyright>This extension in released under the GNU/GPL License - http://www.gnu.org/copyleft/gpl.html</copyright>
-    <license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
     <authorEmail>admin@kubik-rubik.de</authorEmail>
     <authorUrl>http://joomla-extensions.kubik-rubik.de/</authorUrl>
-    <version>2.5-1</version>
     <description>PLG_SIGE_BUTTON_XML_DESCRIPTION</description>
     <files>
         <filename plugin="sige_button">sige_button.php</filename>
@@ -31,6 +31,7 @@
         <fields name="params" addfieldpath="/plugins/editors-xtd/sige_button/fields">
             <fieldset name="basic">
                 <field type="krdonationcodecheck" />
+                <field type="krversioncheck" name="krversioncheck" default="sigebutton|2.5-2" />
                 <field name="method" type="list" default="0" label="PLG_SIGE_BUTTON_METHOD" description="PLG_SIGE_BUTTON_METHODDESC">
                     <option value="1">PLG_SIGE_BUTTON_PLUGINSETTINGS</option>
                     <option value="0">PLG_SIGE_BUTTON_ONTHEFLY</option>
@@ -41,7 +42,7 @@
                 </field>
                 <field name="read_in_folder" type="text" default="images" label="PLG_SIGE_BUTTON_READINFOLDER" description="PLG_SIGE_BUTTON_READINFOLDERDESC" />
                 <field name="token" type="text" default="" label="PLG_SIGE_BUTTON_TOKEN" description="PLG_SIGE_BUTTON_TOKENDESC" />
-                <field type="spacer" label="PLG_SIGE_BUTTON_SPACER_SIZE" />
+                <field type="krtitle" name="spacer_size" label="PLG_SIGE_BUTTON_SPACER_SIZE" />
                 <field name="width" type="text" default="" label="PLG_SIGE_BUTTON_WIDTHTHUMBS" description="PLG_SIGE_BUTTON_WIDTHTHUMBSDESC" />
                 <field name="height" type="text" default="" label="PLG_SIGE_BUTTON_HEIGHTTHUMBS" description="PLG_SIGE_BUTTON_HEIGHTTHUMBSDESC" />
                 <field name="gap_v" type="text" default="" label="PLG_SIGE_BUTTON_GAPV" description="PLG_SIGE_BUTTON_GAPVDESC" />
@@ -65,7 +66,7 @@
                     <option value="2">PLG_SIGE_BUTTON_JNO</option>
                     <option value="0">PLG_SIGE_BUTTON_DONTUSE</option>
                 </field>
-                <field type="spacer" label="PLG_SIGE_BUTTON_SPACER_GALLERY" />
+                <field type="krtitle" name="spacer_gallery" label="PLG_SIGE_BUTTON_SPACER_GALLERY" />
                 <field name="turbo" type="list" default="0" label="PLG_SIGE_BUTTON_TURBO" description="PLG_SIGE_BUTTON_TURBODESC">
                     <option value="1">PLG_SIGE_BUTTON_JYES</option>
                     <option value="2">PLG_SIGE_BUTTON_JNO</option>
@@ -77,12 +78,13 @@
                     <option value="2">PLG_SIGE_BUTTON_JNO</option>
                     <option value="0">PLG_SIGE_BUTTON_DONTUSE</option>
                 </field>
-                <field name="random" type="list" default="0" label="PLG_SIGE_BUTTON_RANDOM" description="PLG_SIGE_BUTTON_RANDOMDESC">
+                <field name="sort" type="list" default="0" label="PLG_SIGE_BUTTON_SORT" description="PLG_SIGE_BUTTON_SORTDESC">
                     <option value="1">PLG_SIGE_BUTTON_JYES</option>
                     <option value="2">PLG_SIGE_BUTTON_NOASC</option>
                     <option value="3">PLG_SIGE_BUTTON_NODESC</option>
                     <option value="4">PLG_SIGE_BUTTON_TIMEASC</option>
                     <option value="5">PLG_SIGE_BUTTON_TIMEDESC</option>
+                    <option value="6">PLG_SIGE_BUTTON_SORTFROMFILE</option>
                     <option value="0">PLG_SIGE_BUTTON_DONTUSE</option>
                 </field>
                 <field name="column_quantity" type="text" default="" label="PLG_SIGE_BUTTON_COLUMNQUANTITY" description="PLG_SIGE_BUTTON_COLUMNQUANTITYDESC" />
@@ -135,7 +137,7 @@
                     <option value="2">PLG_SIGE_BUTTON_JNO</option>
                     <option value="0">PLG_SIGE_BUTTON_DONTUSE</option>
                 </field>
-                <field type="spacer" label="PLG_SIGE_BUTTON_SPACER_JS_VIEW" />
+                <field type="krtitle" name="spacer_js_view" label="PLG_SIGE_BUTTON_SPACER_JS_VIEW" />
                 <field name="image_info" type="list" default="0" label="PLG_SIGE_BUTTON_IMAGEINFO" description="PLG_SIGE_BUTTON_IMAGEINFODESC">
                     <option value="1">PLG_SIGE_BUTTON_JYES</option>
                     <option value="2">PLG_SIGE_BUTTON_JNO</option>
@@ -171,7 +173,7 @@
                     <option value="2">PLG_SIGE_BUTTON_JNO</option>
                     <option value="0">PLG_SIGE_BUTTON_DONTUSE</option>
                 </field>
-                <field type="spacer" label="PLG_SIGE_BUTTON_SPACER_THUMBNAIL" />
+                <field type="krtitle" name="spacer_thumbnail" label="PLG_SIGE_BUTTON_SPACER_THUMBNAIL" />
                 <field name="thumbs" type="list" default="0" label="PLG_SIGE_BUTTON_THUMBS" description="PLG_SIGE_BUTTON_THUMBSDESC">
                     <option value="1">PLG_SIGE_BUTTON_JYES</option>
                     <option value="2">PLG_SIGE_BUTTON_JNO</option>
@@ -221,7 +223,7 @@
                     <option value="3">SHA1</option>
                     <option value="0">PLG_SIGE_BUTTON_DONTUSE</option>
                 </field>
-                <field type="spacer" label="PLG_SIGE_BUTTON_SPACER_SINGLE_IMAGE" />
+                <field type="krtitle" name="spacer_single_name" label="PLG_SIGE_BUTTON_SPACER_SINGLE_IMAGE" />
                 <field name="single" type="text" default="" label="PLG_SIGE_BUTTON_SINGLE" description="PLG_SIGE_BUTTON_SINGLEDESC" />
                 <field name="scaption" type="text" default="" label="PLG_SIGE_BUTTON_SCAPTION" description="PLG_SIGE_BUTTON_SCAPTIONDESC" />
                 <field name="single_gallery" type="list" default="0" label="PLG_SIGE_BUTTON_SINGLEGALLERY" description="PLG_SIGE_BUTTON_SINGLEGALLERYDESC">
@@ -238,6 +240,13 @@
             </fieldset>
             <fieldset name="donation">
                 <field name="donation_code" type="text" default="" size="40" label="KR_DONATION_CODE" description="KR_DONATION_CODEDESC" />
+            </fieldset>
+            <fieldset name="versioncheck">
+                <field name="versioncheck_enable" type="list" default="1" label="KR_VERSION_CHECK" description="KR_VERSION_CHECKDESC">
+                    <option value="1">KR_VERSION_CHECK_ONCESESSION</option>
+                    <option value="2">KR_VERSION_CHECK_ONEVERYLOAD</option>
+                    <option value="0">JNO</option>
+                </field>
             </fieldset>
         </fields>
     </config>

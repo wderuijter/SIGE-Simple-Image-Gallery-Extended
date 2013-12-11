@@ -1,10 +1,9 @@
 <?php
 /**
  *  @Copyright
- *  @package    Editor Button - SIGE Parameter Button - Plugin for Joomla! 2.5
+ *  @package    Editor Button - SIGE Parameters Button - Plugin for Joomla! 2.5
  *  @author     Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version    2.5-1
- *  @date       Created on 15-Jul-2012
+ *  @version    2.5-2 - 2013-10-12
  *  @link       Project Site {@link http://joomla-extensions.kubik-rubik.de/sige-simple-image-gallery-extended}
  *
  *  @license GNU/GPL
@@ -27,7 +26,6 @@ jimport('joomla.plugin.plugin');
 
 class plgButtonsige_button extends JPlugin
 {
-
     function plgButtonsige_button(&$subject, $config)
     {
         parent::__construct($subject, $config);
@@ -64,7 +62,7 @@ class plgButtonsige_button extends JPlugin
             $limit = $this->params->get('limit', 0);
             $limit_quantity = $this->params->get('limit_quantity', 0);
             $noslim = $this->params->get('noslim', 0);
-            $random = $this->params->get('random', 0);
+            $sort = $this->params->get('sort', 0);
             $root = $this->params->get('root', 0);
             $ratio = $this->params->get('ratio', 0);
             $caption = $this->params->get('caption', 0);
@@ -109,26 +107,32 @@ class plgButtonsige_button extends JPlugin
             {
                 $params[] = 'width='.$width;
             }
+
             if($height != 0)
             {
                 $params[] = 'height='.$height;
             }
+
             if($gap_v != 0)
             {
                 $params[] = 'gap_v='.$gap_v;
             }
+
             if($gap_h != 0)
             {
                 $params[] = 'gap_h='.$gap_h;
             }
+
             if($quality != 0)
             {
                 $params[] = 'quality='.$quality;
             }
+
             if($quality_png != 0)
             {
                 $params[] = 'quality_png='.$quality_png;
             }
+
             if($displaynavtip != 0)
             {
                 if($displaynavtip == 1)
@@ -140,6 +144,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'displaynavtip=0';
                 }
             }
+
             if($displayarticle != 0)
             {
                 if($displayarticle == 1)
@@ -151,6 +156,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'displayarticle=0';
                 }
             }
+
             if($thumbs != 0)
             {
                 if($thumbs == 1)
@@ -162,6 +168,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'thumbs=0';
                 }
             }
+
             if($limit != 0)
             {
                 if($limit == 1)
@@ -173,10 +180,12 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'limit=0';
                 }
             }
+
             if($limit_quantity != 0)
             {
                 $params[] = 'limit_quantity='.$limit_quantity;
             }
+
             if($noslim != 0)
             {
                 if($noslim == 1)
@@ -188,29 +197,12 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'noslim=0';
                 }
             }
-            if($random != 0)
+
+            if($sort != 0)
             {
-                if($random == 1)
-                {
-                    $params[] = 'random=1';
-                }
-                elseif($random == 2)
-                {
-                    $params[] = 'random=2';
-                }
-                elseif($random == 3)
-                {
-                    $params[] = 'random=3';
-                }
-                elseif($random == 4)
-                {
-                    $params[] = 'random=4';
-                }
-                elseif($random == 5)
-                {
-                    $params[] = 'random=5';
-                }
+                $params[] = 'sort='.$sort;
             }
+
             if($root != 0)
             {
                 if($root == 1)
@@ -222,6 +214,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'root=0';
                 }
             }
+
             if($ratio != 0)
             {
                 if($ratio == 1)
@@ -233,6 +226,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'ratio=0';
                 }
             }
+
             if($caption != 0)
             {
                 if($caption == 1)
@@ -244,6 +238,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'caption=0';
                 }
             }
+
             if($iptc != 0)
             {
                 if($iptc == 1)
@@ -255,6 +250,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'iptc=0';
                 }
             }
+
             if($iptcutf8 != 0)
             {
                 if($iptcutf8 == 1)
@@ -266,6 +262,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'iptcutf8=0';
                 }
             }
+
             if($print != 0)
             {
                 if($print == 1)
@@ -277,14 +274,17 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'print=0';
                 }
             }
+
             if($single != '')
             {
                 $params[] = 'single='.$single;
             }
+
             if($scaption != '')
             {
                 $params[] = 'scaption='.$scaption;
             }
+
             if($single_gallery != 0)
             {
                 if($single_gallery == 1)
@@ -296,6 +296,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'single_gallery=0';
                 }
             }
+
             if($salign != 0)
             {
                 if($salign == 1)
@@ -311,10 +312,12 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'salign=center';
                 }
             }
+
             if($connect != '')
             {
                 $params[] = 'connect='.$connect;
             }
+
             if($download != 0)
             {
                 if($download == 1)
@@ -326,6 +329,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'download=0';
                 }
             }
+
             if($list != 0)
             {
                 if($list == 1)
@@ -337,6 +341,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'list=0';
                 }
             }
+
             if($crop != 0)
             {
                 if($crop == 1)
@@ -348,33 +353,17 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'crop=0';
                 }
             }
+
             if($crop_factor != 0)
             {
                 $params[] = 'crop_factor='.$crop_factor;
             }
+
             if($thumbdetail != 0)
             {
-                if($thumbdetail == 1)
-                {
-                    $params[] = 'thumbdetail=1';
-                }
-                elseif($thumbdetail == 2)
-                {
-                    $params[] = 'thumbdetail=2';
-                }
-                elseif($thumbdetail == 3)
-                {
-                    $params[] = 'thumbdetail=3';
-                }
-                elseif($thumbdetail == 4)
-                {
-                    $params[] = 'thumbdetail=4';
-                }
-                elseif($thumbdetail == 5)
-                {
-                    $params[] = 'thumbdetail=5';
-                }
+                $params[] = 'thumbdetail='.$thumbdetail;
             }
+
             if($watermark != 0)
             {
                 if($watermark == 1)
@@ -386,48 +375,22 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'watermark=0';
                 }
             }
+
             if($watermarkposition != 0)
             {
-                if($watermarkposition == 1)
-                {
-                    $params[] = 'watermarkposition=1';
-                }
-                elseif($watermarkposition == 2)
-                {
-                    $params[] = 'watermarkposition=2';
-                }
-                elseif($watermarkposition == 3)
-                {
-                    $params[] = 'watermarkposition=3';
-                }
-                elseif($watermarkposition == 4)
-                {
-                    $params[] = 'watermarkposition=4';
-                }
-                elseif($watermarkposition == 5)
-                {
-                    $params[] = 'watermarkposition=5';
-                }
+                $params[] = 'watermarkposition='.$watermarkposition;
             }
+
             if($watermarkimage != '')
             {
                 $params[] = 'watermarkimage='.$watermarkimage;
             }
+
             if($encrypt != 0)
             {
-                if($encrypt == 1)
-                {
-                    $params[] = 'encrypt=1';
-                }
-                elseif($encrypt == 2)
-                {
-                    $params[] = 'encrypt=2';
-                }
-                elseif($encrypt == 3)
-                {
-                    $params[] = 'encrypt=3';
-                }
+                $params[] = 'encrypt='.$encrypt;
             }
+
             if($image_info != 0)
             {
                 if($image_info == 1)
@@ -439,10 +402,12 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'image_info=0';
                 }
             }
+
             if($image_link != '')
             {
                 $params[] = 'image_link='.$image_link;
             }
+
             if($image_link_new != 0)
             {
                 if($image_link_new == 1)
@@ -454,10 +419,12 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'image_link_new=0';
                 }
             }
+
             if($column_quantity != 0)
             {
                 $params[] = 'column_quantity='.$column_quantity;
             }
+
             if($css_image != 0)
             {
                 if($css_image == 1)
@@ -469,6 +436,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'css_image=0';
                 }
             }
+
             if($css_image_half != 0)
             {
                 if($css_image_half == 1)
@@ -480,6 +448,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'css_image_half=0';
                 }
             }
+
             if($copyright != 0)
             {
                 if($copyright == 1)
@@ -491,10 +460,12 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'copyright=0';
                 }
             }
+
             if($word != '')
             {
                 $params[] = 'word='.$word;
             }
+
             if($calcmaxthumbsize != 0)
             {
                 if($calcmaxthumbsize == 1)
@@ -506,6 +477,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'calcmaxthumbsize=0';
                 }
             }
+
             if($fileinfo != 0)
             {
                 if($fileinfo == 1)
@@ -517,6 +489,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'fileinfo=0';
                 }
             }
+
             if($turbo != 0)
             {
                 if($turbo == 1)
@@ -532,6 +505,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'turbo=new';
                 }
             }
+
             if($resize_images != 0)
             {
                 if($resize_images == 1)
@@ -543,14 +517,17 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'resize_images=0';
                 }
             }
+
             if($width_image != 0)
             {
                 $params[] = 'width_image='.$width_image;
             }
+
             if($height_image != 0)
             {
                 $params[] = 'height_image='.$height_image;
             }
+
             if($ratio_image != 0)
             {
                 if($ratio_image == 1)
@@ -562,6 +539,7 @@ class plgButtonsige_button extends JPlugin
                     $params[] = 'ratio_image=0';
                 }
             }
+
             if($images_new != 0)
             {
                 if($images_new == 1)
@@ -609,6 +587,8 @@ class plgButtonsige_button extends JPlugin
             $button->set('name', 'sige_button');
             $button->set('options', "{handler: 'iframe', size: {x: 600, y: 550}}");
         }
+
         return $button;
     }
+
 }

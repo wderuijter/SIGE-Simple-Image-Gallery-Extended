@@ -1,9 +1,9 @@
 <?php
 /**
  *  @Copyright
- *  @package     SIGE - Simple Image Gallery Extended - Plugin Joomla 2.5
+ *  @package     SIGE - Simple Image Gallery Extended
  *  @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version     2.5-3 - 04-Jun-2012
+ *  @version     2.5-6 - 2013-06-19
  *  @link        http://joomla-extensions.kubik-rubik.de/sige-simple-image-gallery-extended
  *
  *  @license GNU/GPL
@@ -50,20 +50,20 @@ class plgContentSige extends JPlugin
 
         parent::__construct($subject, $config);
 
-        if(isset($_SESSION["sigcount"]))
+        if(isset($_SESSION['sigcount']))
         {
-            unset($_SESSION["sigcount"]);
+            unset($_SESSION['sigcount']);
         }
 
-        if(isset($_SESSION["sigcountarticles"]))
+        if(isset($_SESSION['sigcountarticles']))
         {
-            unset($_SESSION["sigcountarticles"]);
+            unset($_SESSION['sigcountarticles']);
         }
 
         $this->_absolute_path = JPATH_SITE;
         $this->_live_site = JURI::base();
 
-        if(substr($this->_live_site, -1) == "/")
+        if(substr($this->_live_site, -1) == '/')
         {
             $this->_live_site = substr($this->_live_site, 0, -1);
         }
@@ -73,12 +73,12 @@ class plgContentSige extends JPlugin
 
     function onContentPrepare($context, &$article, &$params, $limitstart)
     {
-        if(!preg_match("@{gallery}(.*){/gallery}@Us", $article->text))
+        if(!preg_match('@{gallery}(.*){/gallery}@Us', $article->text))
         {
             return;
         }
 
-        if(function_exists("gd_info"))
+        if(function_exists('gd_info'))
         {
             $gdinfo = gd_info();
             $gdsupport = array();
@@ -123,27 +123,27 @@ class plgContentSige extends JPlugin
             }
         }
 
-        if(!isset($_SESSION["sigcountarticles"]))
+        if(!isset($_SESSION['sigcountarticles']))
         {
-            $_SESSION["sigcountarticles"] = -1;
+            $_SESSION['sigcountarticles'] = -1;
         }
 
-        if(preg_match_all("@{gallery}(.*){/gallery}@Us", $article->text, $matches, PREG_PATTERN_ORDER) > 0)
+        if(preg_match_all('@{gallery}(.*){/gallery}@Us', $article->text, $matches, PREG_PATTERN_ORDER) > 0)
         {
-            $_SESSION["sigcountarticles"]++;
+            $_SESSION['sigcountarticles']++;
 
-            if(!isset($_SESSION["sigcount"]))
+            if(!isset($_SESSION['sigcount']))
             {
-                $_SESSION["sigcount"] = -1;
+                $_SESSION['sigcount'] = -1;
             }
 
             $this->_params['lang'] = JFactory::getLanguage()->getTag();
 
             foreach($matches[0] as $match)
             {
-                $_SESSION["sigcount"]++;
-                $sige_code = preg_replace("@{.+?}@", "", $match);
-                $sige_array = explode(",", $sige_code);
+                $_SESSION['sigcount']++;
+                $sige_code = preg_replace('@{.+?}@', '', $match);
+                $sige_array = explode(',', $sige_code);
                 $this->_images_dir = $sige_array[0];
 
                 unset($this->_syntax_parameter);
@@ -153,7 +153,7 @@ class plgContentSige extends JPlugin
                 {
                     for($i = 1; $i < count($sige_array); $i++)
                     {
-                        $parameter_temp = explode("=", $sige_array[$i]);
+                        $parameter_temp = explode('=', $sige_array[$i]);
                         if(count($parameter_temp) >= 2)
                         {
                             $this->_syntax_parameter[strtolower(trim($parameter_temp[0]))] = trim($parameter_temp[1]);
@@ -231,30 +231,30 @@ class plgContentSige extends JPlugin
                             $this->_article_title = preg_replace("@\"@", "'", $article->title);
                         }
 
-                        if($this->_params['random'] == 1)
+                        if($this->_params['sort'] == 1)
                         {
                             shuffle($images);
                         }
-                        elseif($this->_params['random'] == 2)
+                        elseif($this->_params['sort'] == 2)
                         {
                             sort($images);
                         }
-                        elseif($this->_params['random'] == 3)
+                        elseif($this->_params['sort'] == 3)
                         {
                             rsort($images);
                         }
-                        elseif($this->_params['random'] == 4 OR $this->_params['random'] == 5)
+                        elseif($this->_params['sort'] == 4 OR $this->_params['sort'] == 5)
                         {
                             for($a = 0; $a < count($images); $a++)
                             {
                                 $images[$a]['timestamp'] = filemtime($this->_absolute_path.$this->_rootfolder.$this->_images_dir.'/'.$images[$a]['filename']);
                             }
 
-                            if($this->_params['random'] == 4)
+                            if($this->_params['sort'] == 4)
                             {
                                 usort($images, array($this, 'timeasc'));
                             }
-                            elseif($this->_params['random'] == 5)
+                            elseif($this->_params['sort'] == 5)
                             {
                                 usort($images, array($this, 'timedesc'));
                             }
@@ -307,6 +307,32 @@ class plgContentSige extends JPlugin
                         if($this->_params['fileinfo'])
                         {
                             $file_info = $this->getFileInfo();
+
+                            // 2.5-6 DEV
+                            // Use the sorting from the captions.text to sort the images
+                            if(!empty($file_info) AND $this->_params['sort'] == 6)
+                            {
+                                $images_file_info = array();
+
+                                foreach($file_info as $file_info_image)
+                                {
+                                    foreach($images as $key => $image)
+                                    {
+                                        if($file_info_image[0] == $image['filename'])
+                                        {
+                                            $images_file_info[]['filename'] = $file_info_image[0];
+                                            unset($images[$key]);
+                                            break;
+                                        }
+                                    }
+                                }
+
+                                if(!empty($images_file_info))
+                                {
+                                    $images = $images_file_info;
+                                    $noimage = count($images);
+                                }
+                            }
                         }
                         else
                         {
@@ -338,20 +364,20 @@ class plgContentSige extends JPlugin
                         {
                             if($this->_params['salign'] == 'left')
                             {
-                                $sige_css .= ".sige_cont_".$_SESSION["sigcount"]." {width:".($this->_thumbnail_max_width + $this->_params['gap_h'])."px;height:".($this->_thumbnail_max_height + $this->_params['gap_v'] + $caption_height)."px;float:left;display:inline-block;}\n";
+                                $sige_css .= '.sige_cont_'.$_SESSION["sigcount"].' {width:'.($this->_thumbnail_max_width + $this->_params['gap_h']).'px;height:'.($this->_thumbnail_max_height + $this->_params['gap_v'] + $caption_height).'px;float:left;display:inline-block;}'."\n";
                             }
                             elseif($this->_params['salign'] == 'right')
                             {
-                                $sige_css .= ".sige_cont_".$_SESSION["sigcount"]." {width:".($this->_thumbnail_max_width + $this->_params['gap_h'])."px;height:".($this->_thumbnail_max_height + $this->_params['gap_v'] + $caption_height)."px;float:right;display:inline-block;}\n";
+                                $sige_css .= '.sige_cont_'.$_SESSION['sigcount'].' {width:'.($this->_thumbnail_max_width + $this->_params['gap_h']).'px;height:'.($this->_thumbnail_max_height + $this->_params['gap_v'] + $caption_height).'px;float:right;display:inline-block;}'."\n";
                             }
                             elseif($this->_params['salign'] == 'center')
                             {
-                                $sige_css .= ".sige_cont_".$_SESSION["sigcount"]." {width:".($this->_thumbnail_max_width + $this->_params['gap_h'])."px;height:".($this->_thumbnail_max_height + $this->_params['gap_v'] + $caption_height)."px;display:inline-block;}\n";
+                                $sige_css .= '.sige_cont_'.$_SESSION['sigcount'].' {width:'.($this->_thumbnail_max_width + $this->_params['gap_h']).'px;height:'.($this->_thumbnail_max_height + $this->_params['gap_v'] + $caption_height).'px;display:inline-block;}'."\n";
                             }
                         }
                         else
                         {
-                            $sige_css .= ".sige_cont_".$_SESSION["sigcount"]." {width:".($this->_thumbnail_max_width + $this->_params['gap_h'])."px;height:".($this->_thumbnail_max_height + $this->_params['gap_v'] + $caption_height)."px;float:left;display:inline-block;}\n";
+                            $sige_css .= '.sige_cont_'.$_SESSION['sigcount'].' {width:'.($this->_thumbnail_max_width + $this->_params['gap_h']).'px;height:'.($this->_thumbnail_max_height + $this->_params['gap_v'] + $caption_height).'px;float:left;display:inline-block;}'."\n";
                         }
 
                         $this->loadHeadData($sige_css);
@@ -388,7 +414,7 @@ class plgContentSige extends JPlugin
                             $noimage = 1;
                         }
 
-                        $html = '<!-- Simple Image Gallery Extended - Plugin Joomla! 2.5 by Kubik-Rubik.de Viktor Vogel -->';
+                        $html = '<!-- Simple Image Gallery Extended - Plugin Joomla! 2.5 - Kubik-Rubik Joomla! Extensions -->';
 
                         if($this->_params['single'] AND $single_yes AND !$this->_params['word'])
                         {
@@ -416,7 +442,7 @@ class plgContentSige extends JPlugin
 
                         if(!$this->_params['list'] AND !$this->_params['word'])
                         {
-                            $html .= "</ul>\n<span class=\"sige_clr\"></span>";
+                            $html .= '</ul><span class="sige_clr"></span>';
                         }
 
                         if(!empty($noimage_rest) AND !$this->_params['image_link'])
@@ -431,7 +457,7 @@ class plgContentSige extends JPlugin
                         {
                             if((!$this->_params['single'] OR ($this->_params['single'] AND !$single_yes)) AND !$this->_params['list'] AND !$this->_params['word'])
                             {
-                                $html .= '<p class="sige_small"><a href="http://joomla-extensions.kubik-rubik.de" title="SIGE - Simple Image Gallery Extended - Joomla! Extensions by Kubik-Rubik.de - Viktor Vogel" target="_blank">Simple Image Gallery Extended</a></p>';
+                                $html .= '<p class="sige_small"><a href="http://joomla-extensions.kubik-rubik.de" title="SIGE - Simple Image Gallery Extended - Kubik-Rubik Joomla! Extensions" target="_blank">Simple Image Gallery Extended</a></p>';
                             }
                         }
                     }
@@ -452,7 +478,7 @@ class plgContentSige extends JPlugin
                     $html = file_get_contents($this->_absolute_path.$this->_rootfolder.$this->_images_dir.'/sige_turbo_html-'.$this->_params['lang'].'.txt');
                 }
 
-                $article->text = preg_replace("@(<p>)?{gallery}".$sige_code."{/gallery}(</p>)?@s", $html, $article->text);
+                $article->text = preg_replace('@(<p>)?{gallery}'.$sige_code.'{/gallery}(</p>)?@s', $html, $article->text);
             }
 
             $this->loadHeadData();
@@ -461,7 +487,7 @@ class plgContentSige extends JPlugin
 
     private function setParams()
     {
-        $params = array('width', 'height', 'ratio', 'gap_v', 'gap_h', 'quality', 'quality_png', 'displaynavtip', 'navtip', 'limit', 'displaymessage', 'message', 'thumbs', 'thumbs_new', 'view', 'limit_quantity', 'noslim', 'caption', 'iptc', 'iptcutf8', 'print', 'salign', 'connect', 'download', 'list', 'crop', 'crop_factor', 'random', 'single', 'thumbdetail', 'watermark', 'encrypt', 'image_info', 'image_link', 'image_link_new', 'single_gallery', 'column_quantity', 'css_image', 'css_image_half', 'copyright', 'word', 'watermarkposition', 'watermarkimage', 'watermark_new', 'root', 'js', 'calcmaxthumbsize', 'fileinfo', 'turbo', 'resize_images', 'width_image', 'height_image', 'ratio_image', 'images_new', 'scaption');
+        $params = array('width', 'height', 'ratio', 'gap_v', 'gap_h', 'quality', 'quality_png', 'displaynavtip', 'navtip', 'limit', 'displaymessage', 'message', 'thumbs', 'thumbs_new', 'view', 'limit_quantity', 'noslim', 'caption', 'iptc', 'iptcutf8', 'print', 'salign', 'connect', 'download', 'list', 'crop', 'crop_factor', 'sort', 'single', 'thumbdetail', 'watermark', 'encrypt', 'image_info', 'image_link', 'image_link_new', 'single_gallery', 'column_quantity', 'css_image', 'css_image_half', 'copyright', 'word', 'watermarkposition', 'watermarkimage', 'watermark_new', 'root', 'js', 'calcmaxthumbsize', 'fileinfo', 'turbo', 'resize_images', 'width_image', 'height_image', 'ratio_image', 'images_new', 'scaption');
 
         foreach($params as $value)
         {
@@ -472,7 +498,7 @@ class plgContentSige extends JPlugin
 
         if(!empty($count))
         {
-            $_SESSION["sigcount"] = $count;
+            $_SESSION['sigcount'] = $count;
         }
     }
 
@@ -557,12 +583,12 @@ class plgContentSige extends JPlugin
 
     private function timeasc($a, $b)
     {
-        return strcmp($a["timestamp"], $b["timestamp"]);
+        return strcmp($a['timestamp'], $b['timestamp']);
     }
 
     private function timedesc($a, $b)
     {
-        return strcmp($b["timestamp"], $a["timestamp"]);
+        return strcmp($b['timestamp'], $a['timestamp']);
     }
 
     private function encrypt($imagename)
@@ -1003,7 +1029,7 @@ class plgContentSige extends JPlugin
         {
             if(!$this->_params['turbo'] OR ($this->_params['turbo'] AND $this->_turbo_css_read_in))
             {
-                $head = "<style type='text/css'>\n".$sige_css."</style>";
+                $head = '<style type="text/css">'.$sige_css.'</style>';
 
                 if($this->_turbo_css_read_in)
                 {
@@ -1019,13 +1045,13 @@ class plgContentSige extends JPlugin
         {
             $head = array();
 
-            if($_SESSION["sigcountarticles"] == 0)
+            if($_SESSION['sigcountarticles'] == 0)
             {
                 $head[] = '<link rel="stylesheet" href="'.$this->_live_site.'/plugins/content/sige/plugin_sige/sige.css" type="text/css" media="screen" />';
 
                 if($this->_params['js'] == 0)
                 {
-                    if($this->_params['lang'] == "de-DE")
+                    if($this->_params['lang'] == 'de-DE')
                     {
                         $head[] = '<script type="text/javascript" src="'.$this->_live_site.'/plugins/content/sige/plugin_sige/slimbox.js"></script>';
                     }
@@ -1038,7 +1064,7 @@ class plgContentSige extends JPlugin
                 }
                 elseif($this->_params['js'] == 1)
                 {
-                    if($this->_params['lang'] == "de-DE")
+                    if($this->_params['lang'] == 'de-DE')
                     {
                         $head[] = '<script type="text/javascript" src="'.$this->_live_site.'/plugins/content/sige/plugin_sige/lytebox.js"></script>';
                     }
@@ -1050,7 +1076,7 @@ class plgContentSige extends JPlugin
                 }
                 elseif($this->_params['js'] == 2)
                 {
-                    if($this->_params['lang'] == "de-DE")
+                    if($this->_params['lang'] == 'de-DE')
                     {
                         $head[] = '<script type="text/javascript" src="'.$this->_live_site.'/plugins/content/sige/plugin_sige/shadowbox.js"></script>';
                     }
@@ -1076,11 +1102,45 @@ class plgContentSige extends JPlugin
 
         if($document instanceof JDocumentHTML)
         {
+            // 2.5-6-DEV
+            // Combine dynamic CSS instructions - Check whether a custom style tag was already set and combine them to
+            // avoid problems in some browsers due to too many CSS instructions
+            if(!empty($sige_css))
+            {
+                if(!empty($document->_custom))
+                {
+                    $custom_tags = array();
+
+                    foreach($document->_custom as $key => $custom_tag)
+                    {
+                        if(preg_match('@<style type="text/css">(.*)</style>@Us', $custom_tag, $match))
+                        {
+                            $custom_tags[] = $match[1];
+                            unset($document->_custom[$key]);
+                        }
+                    }
+
+                    // If content is loaded from the turbo file, then the CSS instructions need to be prepared for the output
+                    if($sige_css == 1)
+                    {
+                        if(preg_match('@<style type="text/css">(.*)</style>@Us', $head, $match))
+                        {
+                            $sige_css = $match[1];
+                        }
+                    }
+
+                    if(!empty($custom_tags))
+                    {
+                        $head = '<style type="text/css">'.implode('', $custom_tags).$sige_css.'</style>';
+                    }
+                }
+            }
+
             $document->addCustomTag($head);
         }
     }
 
-    private function htmlImage($image, &$html, $noshow, $file_info, $a)
+    private function htmlImage($image, &$html, $noshow, &$file_info, $a)
     {
         if(!empty($image))
         {
@@ -1092,13 +1152,13 @@ class plgContentSige extends JPlugin
 
             if(!empty($file_info))
             {
-                foreach($file_info as $value)
+                foreach($file_info as $key => $value)
                 {
                     if($value[0] == $image)
                     {
                         $image_title = $value[1];
 
-                        if(isset($value[2]))
+                        if(!empty($value[2]))
                         {
                             $image_description = $value[2];
                         }
@@ -1106,8 +1166,17 @@ class plgContentSige extends JPlugin
                         {
                             $image_description = false;
                         }
+
+                        // Link for image
+                        if(!empty($value[3]))
+                        {
+                            $image_link_file = $value[3];
+                        }
+
                         $file_info_set = true;
 
+                        // Remove information from file_info array to speed up the process for the following images
+                        unset($file_info[$key]);
                         break;
                     }
                 }
@@ -1150,9 +1219,24 @@ class plgContentSige extends JPlugin
                 }
             }
 
-            if($this->_params['image_link'] AND empty($noshow))
+            if(($this->_params['image_link'] OR !empty($image_link_file)) AND empty($noshow))
             {
-                $html .= '<a href="http://'.$this->_params['image_link'].'" title="'.$this->_params['image_link'].'" ';
+                // 2.5-6-DEV
+                // Use link from captions.txt if provided
+                if(!empty($image_link_file))
+                {
+                    // Add http:// if not already set
+                    if(!preg_match('@http.?://@', $image_link_file))
+                    {
+                        $image_link_file = 'http://'.$image_link_file;
+                    }
+
+                    $html .= '<a href="'.$image_link_file.'" title="'.$image_link_file.'" ';
+                }
+                else
+                {
+                    $html .= '<a href="http://'.$this->_params['image_link'].'" title="'.$this->_params['image_link'].'" ';
+                }
 
                 if($this->_params['image_link_new'])
                 {
@@ -1432,7 +1516,7 @@ class plgContentSige extends JPlugin
                     $html .= '" /></span>';
                 }
 
-                if(!$this->_params['noslim'] OR $this->_params['image_link'] OR $this->_params['css_image'])
+                if(!$this->_params['noslim'] OR $this->_params['image_link'] OR $this->_params['css_image'] OR !empty($image_link_file))
                 {
                     $html .= '</a>';
                 }
@@ -1546,26 +1630,28 @@ class plgContentSige extends JPlugin
 
         if(file_exists($captions_lang))
         {
-            $captions_file = file($captions_lang);
-            $count = 0;
+            $captions_file = array_map('trim', file($captions_lang));
 
             foreach($captions_file as $value)
             {
-                $captions_line = explode('|', $value);
-                $file_info[$count] = $captions_line;
-                $count++;
+                if(!empty($value))
+                {
+                    $captions_line = explode('|', $value);
+                    $file_info[] = $captions_line;
+                }
             }
         }
         elseif(file_exists($captions_txtfile) AND !file_exists($captions_lang))
         {
-            $captions_file = file($captions_txtfile);
-            $count = 0;
+            $captions_file = array_map('trim', file($captions_txtfile));
 
             foreach($captions_file as $value)
             {
-                $captions_line = explode('|', $value);
-                $file_info[$count] = $captions_line;
-                $count++;
+                if(!empty($value))
+                {
+                    $captions_line = explode('|', $value);
+                    $file_info[] = $captions_line;
+                }
             }
         }
 

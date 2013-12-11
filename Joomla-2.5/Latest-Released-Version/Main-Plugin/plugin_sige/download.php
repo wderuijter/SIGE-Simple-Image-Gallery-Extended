@@ -1,9 +1,9 @@
 <?php
 /**
  *  @Copyright
- *  @package     SIGE - Simple Image Gallery Extended - Plugin Joomla 2.5
+ *  @package     SIGE - Simple Image Gallery Extended
  *  @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version     2.5-3 - 04-Jun-2012
+ *  @version     2.5-6 - 2013-06-19
  *  @link        http://joomla-extensions.kubik-rubik.de/sige-simple-image-gallery-extended
  *
  *  @license GNU/GPL
@@ -21,9 +21,9 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-if($_GET['img'] == "")
+if($_GET['img'] == '')
 {
-    exit("No parameters!");
+    exit('No parameters!');
 }
 
 $_GET['img'] = str_replace('..', '', urldecode($_GET['img']));
@@ -33,12 +33,12 @@ $file = basename($_image_);
 if((substr(strtolower($file), -3) == 'jpg') OR (substr(strtolower($file), -3) == 'gif') OR (substr(strtolower($file), -3) == 'png'))
 {
     $size = filesize($_image_);
-    header("Content-Type: application/octet-stream");
-    header("Content-Disposition: attachment; filename=".$file);
-    header("Content-Length:".$size);
+    header('Content-Type: application/octet-stream');
+    header('Content-Disposition: attachment; filename='.$file);
+    header('Content-Length:'.$size);
     readfile($_image_);
 }
 else
 {
-    exit("$file is not an image type!");
+    exit($file.' is not an image type!');
 }

@@ -1,9 +1,9 @@
 <?php
 /**
  *  @Copyright
- *  @package     SIGE - Simple Image Gallery Extended - Plugin Joomla 2.5
+ *  @package     SIGE - Simple Image Gallery Extended
  *  @author      Viktor Vogel {@link http://www.kubik-rubik.de}
- *  @version     2.5-3 - 04-Jun-2012
+ *  @version     2.5-6 - 2013-06-19
  *  @link        http://joomla-extensions.kubik-rubik.de/sige-simple-image-gallery-extended
  *
  *  @license GNU/GPL
@@ -21,9 +21,9 @@
  *  along with this program. If not, see <http://www.gnu.org/licenses/>.
  */
 
-if($_GET['img'] == "")
+if($_GET['img'] == '')
 {
-    exit("No parameters!");
+    exit('No parameters!');
 }
 
 $_GET['img'] = str_replace('..', '', urldecode($_GET['img']));
@@ -105,9 +105,9 @@ if($crop AND ($crop_factor > 0 AND $crop_factor < 100))
     $y_coordinate = ($height_ori - $crop_height) / 2;
 }
 
-if(strtolower(substr($_GET['img'], -3)) == "jpg")
+if(strtolower(substr($_GET['img'], -3)) == 'jpg')
 {
-    header("Content-type: image/jpg");
+    header('Content-type: image/jpg');
     $src_img = imagecreatefromjpeg($_image_);
     $dst_img = imagecreatetruecolor($new_w, $new_h);
 
@@ -139,15 +139,14 @@ if(strtolower(substr($_GET['img'], -3)) == "jpg")
         }
     }
 
-    $img = imagejpeg($dst_img, '', $_quality_);
+    $img = imagejpeg($dst_img, NULL, $_quality_);
     imagedestroy($src_img);
     imagedestroy($dst_img);
     imagedestroy($img);
 }
-
-if(substr($_GET['img'], -3) == "gif")
+elseif(substr($_GET['img'], -3) == 'gif')
 {
-    header("Content-type: image/gif");
+    header('Content-type: image/gif');
     $src_img = imagecreateFromGif($_image_);
     $dst_img = imagecreatetruecolor($new_w, $new_h);
     imagepalettecopy($dst_img, $src_img);
@@ -180,15 +179,14 @@ if(substr($_GET['img'], -3) == "gif")
         }
     }
 
-    $img = imagegif($dst_img, '', $_quality_);
+    $img = imagegif($dst_img);
     imagedestroy($src_img);
     imagedestroy($dst_img);
     imagedestroy($img);
 }
-
-if(substr($_GET['img'], -3) == "png")
+elseif(substr($_GET['img'], -3) == 'png')
 {
-    header("Content-type: image/png");
+    header('Content-type: image/png');
     $src_img = imagecreatefrompng($_image_);
     $dst_img = imagecreatetruecolor($new_w, $new_h);
     imagepalettecopy($dst_img, $src_img);
@@ -221,7 +219,7 @@ if(substr($_GET['img'], -3) == "png")
         }
     }
 
-    $img = imagepng($dst_img, '', 6);
+    $img = imagepng($dst_img, NULL, 6);
     imagedestroy($src_img);
     imagedestroy($dst_img);
     imagedestroy($img);
