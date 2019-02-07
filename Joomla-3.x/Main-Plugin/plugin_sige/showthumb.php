@@ -107,7 +107,7 @@ if($crop AND ($crop_factor > 0 AND $crop_factor < 100))
 
 if(strtolower(substr($_GET['img'], -3)) == 'jpg')
 {
-    header('Content-type: image/jpg');
+    header('Content-type: image/jpeg');
     $src_img = imagecreatefromjpeg($_image_);
     $dst_img = imagecreatetruecolor($new_w, $new_h);
 
